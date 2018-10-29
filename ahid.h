@@ -2,8 +2,6 @@
 #define AHID_H
 
 #include <QObject>
-#include <QVariant>
-#include <QTimer>
 #include <QDebug>
 #include <windows.h>
 
@@ -15,8 +13,8 @@
 #define VID 0x9999
 #define PID 0x1234
 #define REPORT_ID 0
-#define OUTPUT_REPORT_SIZE 64
-#define INPUT_REPORT_SIZE 64
+#define OUTPUT_REPORT_SIZE 8
+#define INPUT_REPORT_SIZE 8
 
 class AHid : public QObject
 {
@@ -25,39 +23,50 @@ class AHid : public QObject
 public:
     explicit AHid(QObject *parent = nullptr);
 
-    unsigned int readed , writtened  = 0;
+signals:
+    void readedBuffer(QString buffer);
+    void writedBuffer(QString buffer);
+    void usbConnected(bool status);
 
 public slots:
-    void start();
     void update();
 
 private:
-    unsigned int hid_status = 0; // stato di funzionamento libreria ahid
-    QTimer *update_timer = new QTimer(this);
-    QTimer *write_timer = new QTimer(this);
+
+    int hid_status = -1; // stato di funzionamento libreria ahid
+    unsigned char readBuffer[INPUT_REPORT_SIZE] = {};
+    unsigned char writeBuffer[OUTPUT_REPORT_SIZE] = {};
+    unsigned int readed , writtened  = 0;
 
     typedef int (WINAPI *AHid_Init) (HWND, UCHAR*);
     typedef int (WINAPI *AHid_Info) (VOID);
     typedef int (WINAPI *AHid_Register) (INT*, UINT, UINT, INT, UCHAR, UCHAR, UCHAR);
+    typedef int (WINAPI *AHid_Deregister) (INT);
+    typedef int (WINAPI *AHid_Identify) (INT, UCHAR*, UINT);
     typedef int (WINAPI *AHid_Read) (INT, UCHAR*, UINT, UINT*);
     typedef int (WINAPI *AHid_Write) (INT, UCHAR*, UINT, UINT*);
     typedef int (WINAPI *AHid_Find) (INT);
+    typedef int (WINAPI *AHid_Request) (INT);
 
     HMODULE AHid_dll;
 
     int in_pipe, out_pipe = 0;
-    unsigned char readBuffer[INPUT_REPORT_SIZE] = {};
-    unsigned char writeBuffer[OUTPUT_REPORT_SIZE] = {};
+
+    void start();
 
     int Init();
     int Register(int * pipeId, unsigned int vendorId, unsigned int productId, int interfaceId, unsigned char reportId, unsigned char reportSize, unsigned char reportType);
+    int Deregister(int pipeId);
+    int Identify(int pipeId, unsigned char * buffer, unsigned int bufferSize);
     int Find(int pipeId);
     int Read(int pipeId, unsigned char * buffer, unsigned int bytesToRead, unsigned int * bytesRead);
     int Write(int pipeId, unsigned char * buffer, unsigned int bytesToWrite, unsigned int * bytesWritten);
-
+    int Request(int pipeId);
+    int Info(void);
     void release();
     bool isConnected();
 
+    QString toString (unsigned char * buffer, unsigned int buffer_size);
 };
 
 #endif // AHID_H

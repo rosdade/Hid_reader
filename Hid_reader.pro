@@ -1,5 +1,4 @@
-QT += quick \
-    core
+QT += quick
 
 CONFIG += c++11
 
@@ -31,5 +30,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += AHid.dll
+
+DLLDESTDIR += target.path
 
 HEADERS += ahid.h
