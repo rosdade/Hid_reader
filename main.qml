@@ -12,51 +12,22 @@ Window {
     minimumWidth: 640
     //visibility: Window.Maximized
 
-
-    property int timer_ahid: 10
-    property int n_readed_buffer: 0
-    property int n_writed_buffer: 0
-
     Connections {
-        target: AHid
+        target: usbIO
         onReadedBuffer: {
             textReadedBuffer.text = buffer
-            n_readed_buffer++
         }
-    }
-
-    Connections {
-        target: AHid
         onWritedBuffer: {
             textWritedBuffer.text = buffer
-            n_writed_buffer++
         }
-    }
-
-    Connections {
-        target: AHid
         onUsbConnected: {
             isConnected.checked = status
         }
-    }
-
-    Timer {
-        id: ahid_update_timer
-        interval: timer_ahid; running: true; repeat: true
-        onTriggered: AHid.update()
-    }
-
-    Timer {
-        id: ahid_statistics_timer
-        interval: 1000; running: true; repeat: true
-        onTriggered: {
-            textNumReadBuffer.text = n_readed_buffer
-            textNumWritedBuffer.text = n_writed_buffer
-            n_readed_buffer = 0
-            n_writed_buffer = 0
+        onGetStatistics: {
+            textNumReadBuffer.text = n_in
+            textNumWritedBuffer.text = n_out
         }
     }
-
 
     Frame {
         id: frame
@@ -180,8 +151,3 @@ Window {
 
 
 }
-
-/*##^## Designer {
-    D{i:16;anchors_x:0}
-}
- ##^##*/

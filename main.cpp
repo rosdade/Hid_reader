@@ -2,7 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QDebug>
-#include "ahid.h"
+#include "usbio.h"
 
 
 int main(int argc, char *argv[])
@@ -11,17 +11,18 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    //qmlRegisterType<AHid>("ahid", 1, 0, "AHid");
-
     QQmlApplicationEngine engine;
 
     QQmlContext* context = engine.rootContext();
-    AHid hid;
-    context->setContextProperty("AHid", &hid);
+    usbIO usb;
+    usb.init();
+
+    context->setContextProperty("usbIO", &usb);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;
+
 
     return app.exec();
 }
