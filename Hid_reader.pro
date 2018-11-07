@@ -1,4 +1,7 @@
-QT += quick
+QT += quick \
+    core \
+    quickcontrols2 \
+    qml
 
 CONFIG += c++11
 
@@ -17,7 +20,12 @@ SOURCES += main.cpp \
     ahid.cpp \
     usbio.cpp
 
+HEADERS += ahid.h \
+    usbio.h
+
 RESOURCES += qml.qrc
+
+DISTFILES += AHid.dll
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -28,11 +36,4 @@ QML_DESIGNER_IMPORT_PATH =
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
-
-DISTFILES += AHid.dll
-
-DLLDESTDIR += target.path
-
-HEADERS += ahid.h \
-    usbio.h
+!isEmpty(target.path): INSTALLS += target DISTFILES

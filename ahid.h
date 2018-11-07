@@ -8,12 +8,6 @@
 #define AHID_REPTYPE_INT_OUT			1
 #define AHID_REPTYPE_FEATURE			2
 
-#define VID 0x9999
-#define PID 0x1234
-#define REPORT_ID 0
-#define OUTPUT_REPORT_SIZE 8
-#define INPUT_REPORT_SIZE 8
-
 class AHid
 {
 
@@ -46,7 +40,7 @@ private:
     typedef int (WINAPI *AHid_Find) (INT);
     typedef int (WINAPI *AHid_Request) (INT);
 
-    HMODULE AHid_dll;    
+    HMODULE AHid_dll;
 };
 
 #endif // AHID_H
